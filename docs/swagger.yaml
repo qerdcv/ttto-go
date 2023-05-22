@@ -1,0 +1,100 @@
+definitions:
+  http.Response:
+    properties:
+      message:
+        type: string
+    type: object
+  http.UserRequest:
+    properties:
+      password:
+        maxLength: 30
+        minLength: 4
+        type: string
+      username:
+        maxLength: 30
+        minLength: 3
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Tic-Tac-Toe online
+  title: Swagger of ttt-online
+  version: 0.0.1
+paths:
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: logins to the application
+      parameters:
+      - description: Data of new user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: login to the app
+      tags:
+      - auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: creates new user
+      parameters:
+      - description: Data of new user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: register new user
+      tags:
+      - auth
+swagger: "2.0"

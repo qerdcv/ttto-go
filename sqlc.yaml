@@ -1,0 +1,10 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "internal/ttto/repository/queries"
+    schema: "internal/ttto/repository/migrations"
+    gen:
+      go:
+        package: "storage"
+        out: "internal/ttto/repository/storage"
+        emit_prepared_queries: true
