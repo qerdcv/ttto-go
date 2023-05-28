@@ -119,7 +119,7 @@ func (s *server) login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", token, int(time.Hour*24*7), "/", "localhost", false, true)
+	c.SetCookie("token", token, int((time.Hour * 24 * 7).Milliseconds()), "/", "localhost", false, true)
 	c.JSON(http.StatusOK, gin.H{
 		"message": http.StatusText(http.StatusOK),
 	})
