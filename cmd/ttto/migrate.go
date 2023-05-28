@@ -37,7 +37,7 @@ func runMigration(c *cli.Context) error {
 
 	log.Printf("before migration current version %d, is dirty %v", v, isDirty)
 
-	if err = m.Up(); err != nil {
+	if err = m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("migration up: %w", err)
 	}
 
