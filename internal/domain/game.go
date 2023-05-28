@@ -4,7 +4,7 @@ type Mark string
 
 const (
 	ownerMark    Mark = "X"
-	opponentMark Mark = "O"
+	opponentMark Mark = "0"
 )
 
 type State string
@@ -59,11 +59,14 @@ func (g *Game) IsWin() bool {
 	field := g.Field.unzip()
 	currentMark := g.CurrentPlayerMark()
 	for _, c := range winConditions {
+		matchedCnt := 0
 		for _, idx := range c {
 			if field[idx] != currentMark {
 				break
 			}
-
+			matchedCnt++
+		}
+		if matchedCnt == len(g.Field) {
 			return true
 		}
 	}

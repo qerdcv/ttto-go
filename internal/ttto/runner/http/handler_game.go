@@ -160,6 +160,7 @@ func (s *server) makeStep(c *gin.Context) {
 	rawGID := c.Param("gameID")
 	gID, _ := strconv.Atoi(rawGID)
 	if err := s.service.MakeStep(c.Request.Context(), int32(gID), &step); err != nil {
+		log.Println(err)
 		switch {
 		case errors.Is(err, service.ErrUnauthorized):
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
@@ -266,6 +267,7 @@ func (s *server) subscribeToGameUpdates(c *gin.Context) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	sendGameUpdate := func(g *domain.Game) {
 		b, innErr := json.Marshal(g)

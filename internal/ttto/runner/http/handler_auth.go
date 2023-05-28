@@ -13,7 +13,7 @@ import (
 )
 
 func (s *server) setupAuthRoutes(g *gin.RouterGroup) {
-	authG := g.Group("/auth")
+	authG := g.Group("")
 	{
 		authG.POST("/registration", s.registration)
 		authG.POST("/login", s.login)
@@ -57,7 +57,7 @@ func (s *server) registration(c *gin.Context) {
 			})
 		case errors.Is(err, service.ErrUserAlreadyExists):
 			c.AbortWithStatusJSON(http.StatusConflict, gin.H{
-				"message": err,
+				"message": http.StatusText(http.StatusConflict),
 			})
 		default:
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -108,7 +108,7 @@ func (s *server) login(c *gin.Context) {
 			})
 		case errors.Is(err, service.ErrUserNotFound), errors.Is(err, service.ErrInvalidCredentials):
 			c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
-				"message": service.ErrInvalidCredentials,
+				"message": service.ErrInvalidCredentials.Error(),
 			})
 		default:
 			fmt.Println(err)
