@@ -1,5 +1,5 @@
 package conf
 
 type Auth struct {
-	Secret []byte `required:"true"`
+	Secret string `required:"true"`
 }

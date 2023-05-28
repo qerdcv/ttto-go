@@ -21,7 +21,6 @@ func (u *User) Validate() error {
 	)
 }
 
-func (u *User) HashPassword(secret []byte) {
-	fmt.Println(string(secret), "<-- secret")
-	u.Password = fmt.Sprintf("%x", string(pbkdf2.Key([]byte(u.Password), secret, 100_000, 32, sha256.New)))
+func (u *User) HashPassword(secret string) {
+	u.Password = fmt.Sprintf("%x", string(pbkdf2.Key([]byte(u.Password), []byte(secret), 100_000, 32, sha256.New)))
 }

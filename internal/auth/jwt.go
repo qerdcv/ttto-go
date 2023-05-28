@@ -38,7 +38,7 @@ func (t *JWTTokenizer) Encode(user *domain.User) (string, error) {
 			ID:       user.ID,
 			Username: user.Username,
 		},
-	).SignedString(t.cfg.Secret)
+	).SignedString([]byte(t.cfg.Secret))
 }
 
 func (t *JWTTokenizer) Decode(accessToken string) (*domain.User, error) {
