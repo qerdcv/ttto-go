@@ -11,7 +11,7 @@ import (
 type User struct {
 	ID       int32  `json:"id"`
 	Username string `json:"username"`
-	Password string `json:"password"`
+	Password string `json:"password,omitempty"`
 }
 
 func (u *User) Validate() error {

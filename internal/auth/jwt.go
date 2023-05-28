@@ -31,7 +31,7 @@ func NewJWTTokenizer(cfg conf.Auth) *JWTTokenizer {
 	}
 }
 
-func (t *JWTTokenizer) Encode(user domain.User) (string, error) {
+func (t *JWTTokenizer) Encode(user *domain.User) (string, error) {
 	return jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
 		Claims{
@@ -41,7 +41,7 @@ func (t *JWTTokenizer) Encode(user domain.User) (string, error) {
 	).SignedString(t.cfg.Secret)
 }
 
-func (t *JWTTokenizer) Decode(accessToken string) (domain.User, error) {
+func (t *JWTTokenizer) Decode(accessToken string) (*domain.User, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("invalid signin method: %s", token.Header["alg"])
@@ -49,15 +49,15 @@ func (t *JWTTokenizer) Decode(accessToken string) (domain.User, error) {
 		return t.cfg.Secret, nil
 	})
 	if err != nil {
-		return domain.User{}, fmt.Errorf("jwt parse with claims: %w", err)
+		return nil, fmt.Errorf("jwt parse with claims: %w", err)
 	}
 
 	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
-		return domain.User{
+		return &domain.User{
 			ID:       claims.ID,
 			Username: claims.Username,
 		}, nil
 	}
 
-	return domain.User{}, ErrInvalidJWTToken
+	return nil, ErrInvalidJWTToken
 }

@@ -15,7 +15,7 @@ var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 )
 
-func (s *Service) CreateUser(ctx context.Context, user domain.User) error {
+func (s *Service) CreateUser(ctx context.Context, user *domain.User) error {
 	if err := user.Validate(); err != nil {
 		return newErrValidation(err)
 	}
@@ -32,7 +32,7 @@ func (s *Service) CreateUser(ctx context.Context, user domain.User) error {
 	return nil
 }
 
-func (s *Service) AuthorizeUser(ctx context.Context, user domain.User) (string, error) {
+func (s *Service) AuthorizeUser(ctx context.Context, user *domain.User) (string, error) {
 	if err := user.Validate(); err != nil {
 		return "", newErrValidation(err)
 	}
@@ -59,6 +59,6 @@ func (s *Service) AuthorizeUser(ctx context.Context, user domain.User) (string, 
 	return token, nil
 }
 
-func (s *Service) DecodeToken(token string) (domain.User, error) {
+func (s *Service) DecodeToken(token string) (*domain.User, error) {
 	return s.tokenizer.Decode(token)
 }

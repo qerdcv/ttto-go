@@ -1,4 +1,61 @@
 definitions:
+  domain.Game:
+    properties:
+      current_player:
+        $ref: '#/definitions/domain.User'
+      current_state:
+        $ref: '#/definitions/domain.State'
+      field:
+        items:
+          items:
+            $ref: '#/definitions/domain.Mark'
+          type: array
+        type: array
+      id:
+        type: integer
+      opponent:
+        $ref: '#/definitions/domain.User'
+      owner:
+        $ref: '#/definitions/domain.User'
+      step_count:
+        type: integer
+      winner:
+        $ref: '#/definitions/domain.User'
+    type: object
+  domain.Mark:
+    enum:
+    - X
+    - O
+    type: string
+    x-enum-varnames:
+    - ownerMark
+    - opponentMark
+  domain.State:
+    enum:
+    - pending
+    - in_game
+    - done
+    type: string
+    x-enum-varnames:
+    - PendingState
+    - InGameState
+    - DoneState
+  domain.Step:
+    properties:
+      col:
+        type: integer
+      row:
+        type: integer
+    type: object
+  domain.User:
+    properties:
+      id:
+        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   http.Response:
     properties:
       message:
@@ -21,7 +78,7 @@ info:
   title: Swagger of ttt-online
   version: 0.0.1
 paths:
-  /api/v1/auth/login:
+  /api/auth/login:
     post:
       consumes:
       - application/json
@@ -59,7 +116,24 @@ paths:
       summary: login to the app
       tags:
       - auth
-  /api/v1/auth/register:
+  /api/auth/logout:
+    get:
+      description: logouts from the application
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: logout from the app
+      tags:
+      - auth
+  /api/auth/registration:
     post:
       consumes:
       - application/json
@@ -97,4 +171,208 @@ paths:
       summary: register new user
       tags:
       - auth
+  /api/games:
+    post:
+      description: create new game
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: create new game
+      tags:
+      - game
+  /api/games/{gameID}:
+    get:
+      description: get game by id
+      parameters:
+      - description: id of the game
+        in: path
+        name: gameID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Game'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: get game by id
+      tags:
+      - game
+    patch:
+      consumes:
+      - application/json
+      description: place mark into the field
+      parameters:
+      - description: id of the game
+        in: path
+        name: gameID
+        required: true
+        type: integer
+      - description: Step coords
+        in: body
+        name: step
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Step'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: Invalid game state
+          schema:
+            $ref: '#/definitions/http.Response'
+        "401":
+          description: Need to be authorized
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Game with provided id is not found
+          schema:
+            $ref: '#/definitions/http.Response'
+        "409":
+          description: Cell already occupied
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Something went wrong
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: place mark into the field
+      tags:
+      - game
+  /api/games/{gameID}/history:
+    get:
+      description: get game history
+      parameters:
+      - description: id of the game
+        in: path
+        name: gameID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Game with provided id is not found
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Something went wrong
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: get game history
+      tags:
+      - game
+  /api/games/{gameID}/login:
+    patch:
+      description: login into the game
+      parameters:
+      - description: id of the game
+        in: path
+        name: gameID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: Invalid game state
+          schema:
+            $ref: '#/definitions/http.Response'
+        "401":
+          description: Need to be authorized
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Game with provided id is not found
+          schema:
+            $ref: '#/definitions/http.Response'
+        "409":
+          description: User already in game
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Something went wrong
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: login into the game
+      tags:
+      - game
+  /api/games/{gameID}/subscribe:
+    get:
+      description: subscribe to the game updates
+      parameters:
+      - description: id of the game
+        in: path
+        name: gameID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Game with provided id is not found
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Something went wrong
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: subscribe to the game updates
+      tags:
+      - game
+  /api/v1/ping:
+    get:
+      description: pong
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: pong
+      tags:
+      - healthcheck
 swagger: "2.0"

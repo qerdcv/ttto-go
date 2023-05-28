@@ -22,7 +22,7 @@ type Game struct {
 
 type GamesHistory struct {
 	ID              int32
-	GameID          sql.NullInt32
+	GameID          int32
 	OwnerID         int32
 	OpponentID      sql.NullInt32
 	CurrentPlayerID sql.NullInt32

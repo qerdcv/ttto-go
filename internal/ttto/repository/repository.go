@@ -13,11 +13,13 @@ var (
 )
 
 type Repository struct {
-	q *storage.Queries
+	db *sql.DB
+	q  *storage.Queries
 }
 
 func New(db *sql.DB) *Repository {
 	return &Repository{
-		q: storage.New(db),
+		db: db,
+		q:  storage.New(db),
 	}
 }

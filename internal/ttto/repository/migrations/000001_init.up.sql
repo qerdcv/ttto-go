@@ -48,7 +48,7 @@ FROM games g
 CREATE TABLE IF NOT EXISTS games_history
 (
     id                SERIAL PRIMARY KEY,
-    game_id           INTEGER REFERENCES games (id),
+    game_id           INTEGER     NOT NULL REFERENCES games (id),
     owner_id          INTEGER     NOT NULL REFERENCES users (id),
     opponent_id       INTEGER REFERENCES users (id),
     current_player_id INTEGER REFERENCES users (id),

@@ -12,7 +12,7 @@ import (
 	"github.com/qerdcv/ttto/internal/ttto/repository/storage"
 )
 
-func (r *Repository) CreateUser(ctx context.Context, user domain.User) error {
+func (r *Repository) CreateUser(ctx context.Context, user *domain.User) error {
 	if _, err := r.q.CreateUser(ctx, storage.CreateUserParams{
 		Username: user.Username,
 		Password: user.Password,
@@ -28,15 +28,19 @@ func (r *Repository) CreateUser(ctx context.Context, user domain.User) error {
 	return nil
 }
 
-func (r *Repository) GetUserByUsername(ctx context.Context, username string) (domain.User, error) {
+func (r *Repository) GetUserByUsername(ctx context.Context, username string) (*domain.User, error) {
 	u, err := r.q.GetUserByUsername(ctx, username)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.User{}, ErrNotFound
+			return nil, ErrNotFound
 		}
 
-		return domain.User{}, fmt.Errorf("queries get user by username: %w", err)
+		return nil, fmt.Errorf("queries get user by username: %w", err)
 	}
 
-	return domain.User(u), nil
+	return &domain.User{
+		ID:       u.ID,
+		Username: u.Username,
+		Password: u.Password,
+	}, nil
 }

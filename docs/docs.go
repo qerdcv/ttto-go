@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/auth/login": {
+        "/api/auth/login": {
             "post": {
                 "description": "logins to the application",
                 "consumes": [
@@ -74,7 +74,33 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/register": {
+        "/api/auth/logout": {
+            "get": {
+                "description": "logouts from the application",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "logout from the app",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/registration": {
             "post": {
                 "description": "creates new user",
                 "consumes": [
@@ -131,9 +157,402 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/games": {
+            "post": {
+                "description": "create new game",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "create new game",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/games/{gameID}": {
+            "get": {
+                "description": "get game by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "get game by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id of the game",
+                        "name": "gameID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Game"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "place mark into the field",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "place mark into the field",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id of the game",
+                        "name": "gameID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Step coords",
+                        "name": "step",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Step"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid game state",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Need to be authorized",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Game with provided id is not found",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Cell already occupied",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Something went wrong",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/games/{gameID}/history": {
+            "get": {
+                "description": "get game history",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "get game history",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id of the game",
+                        "name": "gameID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Game with provided id is not found",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Something went wrong",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/games/{gameID}/login": {
+            "patch": {
+                "description": "login into the game",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "login into the game",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id of the game",
+                        "name": "gameID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid game state",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Need to be authorized",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Game with provided id is not found",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "User already in game",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Something went wrong",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/games/{gameID}/subscribe": {
+            "get": {
+                "description": "subscribe to the game updates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "subscribe to the game updates",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id of the game",
+                        "name": "gameID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Game with provided id is not found",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Something went wrong",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ping": {
+            "get": {
+                "description": "pong",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "healthcheck"
+                ],
+                "summary": "pong",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "domain.Game": {
+            "type": "object",
+            "properties": {
+                "current_player": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "current_state": {
+                    "$ref": "#/definitions/domain.State"
+                },
+                "field": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/domain.Mark"
+                        }
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "opponent": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "owner": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "step_count": {
+                    "type": "integer"
+                },
+                "winner": {
+                    "$ref": "#/definitions/domain.User"
+                }
+            }
+        },
+        "domain.Mark": {
+            "type": "string",
+            "enum": [
+                "X",
+                "O"
+            ],
+            "x-enum-varnames": [
+                "ownerMark",
+                "opponentMark"
+            ]
+        },
+        "domain.State": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "in_game",
+                "done"
+            ],
+            "x-enum-varnames": [
+                "PendingState",
+                "InGameState",
+                "DoneState"
+            ]
+        },
+        "domain.Step": {
+            "type": "object",
+            "properties": {
+                "col": {
+                    "type": "integer"
+                },
+                "row": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "http.Response": {
             "type": "object",
             "properties": {
