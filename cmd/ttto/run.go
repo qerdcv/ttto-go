@@ -11,7 +11,9 @@ import (
 	"github.com/qerdcv/ttto/internal/domain"
 	"github.com/qerdcv/ttto/internal/eventst"
 	"github.com/qerdcv/ttto/internal/ttto/repository"
+	"github.com/qerdcv/ttto/internal/ttto/runner"
 	"github.com/qerdcv/ttto/internal/ttto/runner/http"
+	"github.com/qerdcv/ttto/internal/ttto/runner/metrics"
 	"github.com/qerdcv/ttto/internal/ttto/service"
 )
 
@@ -30,10 +32,12 @@ func run(c *cli.Context) error {
 	repo := repository.New(db)
 	tokenizer := auth.NewJWTTokenizer(cfg.Auth)
 	svc := service.New(repo, tokenizer, es, cfg.App)
-	httpR := http.New(svc, es, cfg.HTTP)
 
-	if err = httpR.Run(); err != nil {
-		return fmt.Errorf("http runner run: %w", err)
+	if err = runner.Run(
+		http.New(svc, es, cfg.HTTP),
+		metrics.New(cfg.Metrics),
+	); err != nil {
+		return fmt.Errorf("runner run: %w", err)
 	}
 
 	return nil

@@ -10,8 +10,9 @@ type Config struct {
 	DB   DBConfig
 	HTTP HTTP
 
-	App  App
-	Auth Auth
+	App     App
+	Auth    Auth
+	Metrics Metrics
 }
 
 func New() (*Config, error) {
