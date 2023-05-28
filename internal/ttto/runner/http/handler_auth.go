@@ -2,7 +2,6 @@ package http
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -35,7 +34,7 @@ func (s *server) setupAuthRoutes(g *gin.RouterGroup) {
 //	@Failure		409		{object}	http.Response
 //	@Failure		422		{object}	http.Response
 //	@Failure		500		{object}	http.Response
-//	@Router			/api/auth/registration [post]
+//	@Router			/api/registration [post]
 func (s *server) registration(c *gin.Context) {
 	var u UserRequest
 	if err := c.ShouldBindJSON(&u); err != nil {
@@ -85,7 +84,7 @@ func (s *server) registration(c *gin.Context) {
 //	@Failure		409		{object}	http.Response
 //	@Failure		422		{object}	http.Response
 //	@Failure		500		{object}	http.Response
-//	@Router			/api/auth/login [post]
+//	@Router			/api/login [post]
 func (s *server) login(c *gin.Context) {
 	var u UserRequest
 	if err := c.ShouldBindJSON(&u); err != nil {
@@ -111,7 +110,6 @@ func (s *server) login(c *gin.Context) {
 				"message": service.ErrInvalidCredentials.Error(),
 			})
 		default:
-			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 				"message": http.StatusText(http.StatusInternalServerError),
 			})
@@ -119,7 +117,7 @@ func (s *server) login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", token, int((time.Hour * 24 * 7).Milliseconds()), "/", "localhost", false, true)
+	c.SetCookie("token", token, int((time.Hour * 24 * 7).Milliseconds()), "/", "*", false, true)
 	c.JSON(http.StatusOK, gin.H{
 		"message": http.StatusText(http.StatusOK),
 	})
@@ -133,7 +131,7 @@ func (s *server) login(c *gin.Context) {
 //	@Produce		json
 //	@Success		200	{object}	http.Response
 //	@Failure		500	{object}	http.Response
-//	@Router			/api/auth/logout [get]
+//	@Router			/api/logout [get]
 func (s *server) logout(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", "localhost", false, true)
 }

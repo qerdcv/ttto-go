@@ -16,10 +16,11 @@ type Service struct {
 	cfg conf.App
 }
 
-func New(repo *repository.Repository, tokenizer *auth.JWTTokenizer, es *eventst.EventStream[*domain.Game]) *Service {
+func New(repo *repository.Repository, tokenizer *auth.JWTTokenizer, es *eventst.EventStream[*domain.Game], cfg conf.App) *Service {
 	return &Service{
 		repo:      repo,
 		tokenizer: tokenizer,
 		es:        es,
+		cfg:       cfg,
 	}
 }

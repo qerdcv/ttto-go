@@ -46,7 +46,7 @@ func (t *JWTTokenizer) Decode(accessToken string) (*domain.User, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("invalid signin method: %s", token.Header["alg"])
 		}
-		return t.cfg.Secret, nil
+		return []byte(t.cfg.Secret), nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("jwt parse with claims: %w", err)

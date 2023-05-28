@@ -184,6 +184,5 @@ func (r *Repository) GetGameHistory(ctx context.Context, gID int32) ([]*domain.G
 		}
 	}
 
-	fmt.Println(dbGHistory, " <- db game history")
 	return gHistory, nil
 }

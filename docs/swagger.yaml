@@ -25,7 +25,7 @@ definitions:
   domain.Mark:
     enum:
     - X
-    - O
+    - "0"
     type: string
     x-enum-varnames:
     - ownerMark
@@ -78,99 +78,6 @@ info:
   title: Swagger of ttt-online
   version: 0.0.1
 paths:
-  /api/auth/login:
-    post:
-      consumes:
-      - application/json
-      description: logins to the application
-      parameters:
-      - description: Data of new user
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/http.UserRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/http.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/http.Response'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/http.Response'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/http.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/http.Response'
-      summary: login to the app
-      tags:
-      - auth
-  /api/auth/logout:
-    get:
-      description: logouts from the application
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/http.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/http.Response'
-      summary: logout from the app
-      tags:
-      - auth
-  /api/auth/registration:
-    post:
-      consumes:
-      - application/json
-      description: creates new user
-      parameters:
-      - description: Data of new user
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/http.UserRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/http.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/http.Response'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/http.Response'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/http.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/http.Response'
-      summary: register new user
-      tags:
-      - auth
   /api/games:
     post:
       description: create new game
@@ -358,6 +265,99 @@ paths:
       summary: subscribe to the game updates
       tags:
       - game
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: logins to the application
+      parameters:
+      - description: Data of new user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: login to the app
+      tags:
+      - auth
+  /api/logout:
+    get:
+      description: logouts from the application
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: logout from the app
+      tags:
+      - auth
+  /api/registration:
+    post:
+      consumes:
+      - application/json
+      description: creates new user
+      parameters:
+      - description: Data of new user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: register new user
+      tags:
+      - auth
   /api/v1/ping:
     get:
       description: pong

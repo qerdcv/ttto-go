@@ -29,7 +29,7 @@ func run(c *cli.Context) error {
 	es := eventst.NewEventStream[*domain.Game]()
 	repo := repository.New(db)
 	tokenizer := auth.NewJWTTokenizer(cfg.Auth)
-	svc := service.New(repo, tokenizer, es)
+	svc := service.New(repo, tokenizer, es, cfg.App)
 	httpR := http.New(svc, es, cfg.HTTP)
 
 	if err = httpR.Run(); err != nil {
