@@ -160,8 +160,12 @@ func (s *server) makeStep(c *gin.Context) {
 	rawGID := c.Param("gameID")
 	gID, _ := strconv.Atoi(rawGID)
 	if err := s.service.MakeStep(c.Request.Context(), int32(gID), &step); err != nil {
-		log.Println(err)
+		var valErr *service.ErrValidation
 		switch {
+		case errors.As(err, &valErr):
+			c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+				"message": valErr,
+			})
 		case errors.Is(err, service.ErrUnauthorized):
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"message": http.StatusText(http.StatusUnauthorized),

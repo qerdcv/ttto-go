@@ -98,6 +98,10 @@ func (s *Service) MakeStep(ctx context.Context, gID int32, step *domain.Step) er
 		return ErrUnauthorized
 	}
 
+	if err := step.Validate(); err != nil {
+		return newErrValidation(err)
+	}
+
 	g, err := s.GetGame(ctx, gID)
 	if err != nil {
 		return err
