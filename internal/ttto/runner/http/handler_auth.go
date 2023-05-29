@@ -133,5 +133,5 @@ func (s *server) login(c *gin.Context) {
 //	@Failure		500	{object}	http.Response
 //	@Router			/api/logout [get]
 func (s *server) logout(c *gin.Context) {
-	c.SetCookie("token", "", -1, "/", "localhost", false, true)
+	c.SetCookie("token", "", -1, "/", "*", false, true)
 }
