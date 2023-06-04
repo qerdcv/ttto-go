@@ -130,7 +130,7 @@ func domainGameFromDB(dbG storage.GamesWithUsername) (*domain.Game, error) {
 	}
 
 	if dbG.WinnerName.Valid {
-		game.Opponent = &domain.User{
+		game.Winner = &domain.User{
 			ID:       dbG.WinnerID.Int32,
 			Username: dbG.WinnerName.String,
 		}
